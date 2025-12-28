@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2B CREATIVE | Agency</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 1. ОСНОВНЫЕ НАСТРОЙКИ --- */
+        :root {
+            --bg-color: #050505;
+            --card-bg: #0f0f0f;
+            --accent: #00ffa3; /* Неоновый зеленый */
+            --accent-hover: #00cc82;
+            --text-main: #ffffff;
+            --text-muted: #888888;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Manrope', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* Фоновая сетка для стиля */
+        .bg-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- 2. АНИМАЦИИ ПОЯВЛЕНИЯ (SCROLL REVEAL) --- */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- 3. НАВИГАЦИЯ --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            letter-spacing: -0.5px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        /* --- 4. КНОПКИ --- */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            text-decoration: none;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            font-size: 0.8rem;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 0%; height: 100%;
+            background: var(--accent);
+            z-index: -1;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .btn:hover {
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 163, 0.4);
+        }
+
+        .btn:hover::before {
+            width: 100%;
+        }
+
+        /* --- 5. ГЛАВНЫЙ ЭКРАН (HERO) --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 0 10%;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            max-width: 500px;
+            color: var(--text-muted);
+            margin-bottom: 3rem;
+            font-size: 1.2rem;
+        }
+
+        /* --- 6. ТАРИФЫ (PRICING) --- */
+        .pricing-section {
+            padding: 8rem 5%;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-header h2 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            position: relative;
+            transition: transform 0.4s, border-color 0.4s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            border-color: var(--accent);
+        }
+
+        /* Стиль для "Бизнес" (средняя карточка) */
+        .card.featured {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .card.featured::after {
+            content: 'ПОПУЛЯРНОЕ';
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent);
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        .plan-name {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .price {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .features {
+            list-style: none;
+            margin-bottom: 3rem;
+            flex-grow: 1; /* Кнопка всегда внизу */
+        }
+
+        .features li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            color: #ccc;
+        }
+
+        .features li::before {
+            content: '✓';
+            color: var(--accent);
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .card-btn {
+            width: 100%;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            text-decoration: none;
+            transition: 0.3s;
+            font-weight: 600;
+        }
+
+        .card.featured .card-btn, .card-btn:hover {
+            background: var(--accent);
+            color: black;
+            border-color: var(--accent);
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            padding: 4rem 5%;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-grid"></div>
+
+    <nav>
+        <a href="#" class="logo">B2B CREATIVE.</a>
+        <div class="nav-links">
+            <a href="#services">Услуги</a>
+            <a href="#pricing">Тарифы</a>
+            <a href="#contact">Контакты</a>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="reveal">
+            <h1>ЦИФРОВАЯ<br>ТРАНСФОРМАЦИЯ</h1>
+            <p>Мы создаем веб-решения, которые меняют правила игры. Стиль, технологии и эффективность в каждой строчке кода.</p>
+            <a href="#pricing" class="btn">Выбрать план</a>
+        </div>
+    </section>
+
+    <!-- PRICING -->
+    <section id="pricing" class="pricing-section">
+        <div class="section-header reveal">
+            <h2>ТАРИФНЫЕ ПЛАНЫ</h2>
+            <p style="color: #888;">Выберите решение, которое подходит вашему масштабу</p>
+        </div>
+
+        <div class="pricing-grid">
+            
+            <!-- TARIF 1 -->
+            <div class="card reveal" style="transition-delay: 0.1s;">
+                <div class="plan-name">Стандарт</div>
+                <div class="price">40к <span>/ проект</span></div>
+                <ul class="features">
+                    <li>Лендинг (до 5 блоков)</li>
+                    <li>Адаптивная верстка</li>
+                    <li>Базовая SEO настройка</li>
+                    <li>Срок: 5 дней</li>
+                </ul>
+                <a href="#" class="card-btn">Начать</a>
+            </div>
+
+            <!-- TARIF 2 -->
+            <div class="card featured reveal" style="transition-delay: 0.2s;">
+                <div class="plan-name">Бизнес</div>
+                <div class="price">90к <span>/ проект</span></div>
+                <ul class="features">
+                    <li>Многостраничный сайт</li>
+                    <li>CMS (Админка)</li>
+                    <li>Интерактивные анимации</li>
+                    <li>SEO + Аналитика</li>
+                    <li>Срок: 14 дней</li>
+                </ul>
+                <a href="#" class="card-btn">Начать</a>
+            </div>
+
+            <!-- TARIF 3 -->
+            <div class="card reveal" style="transition-delay: 0.3s;">
+                <div class="plan-name">Премиум</div>
+                <div class="price">250к+ <span>/ проект</span></div>
+                <ul class="features">
+                    <li>E-commerce / Сложный сервис</li>
+                    <li>Уникальный 3D дизайн</li>
+                    <li>Полная брендинг-упаковка</li>
+                    <li>Техническая поддержка 24/7</li>
+                    <li>Индивидуальные сроки</li>
+                </ul>
+                <a href="#" class="card-btn">Обсудить</a>
+            </div>
+
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 B2B Creative. Все права защищены.</p>
+    </footer>
+
+    <script>
+        // Простой и эффективный скрипт для анимации появления при скролле
+        
+        // Находим все элементы с классом .reveal
+        const reveals = document.querySelectorAll('.reveal');
+
+        function revealOnScroll() {
+            const windowHeight = window.innerHeight;
+            const elementVisible = 150; // Дистанция от низа экрана
+
+            reveals.forEach((reveal) => {
+                const elementTop = reveal.getBoundingClientRect().top;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    reveal.classList.add('active');
+                }
+            });
+        }
+
+        // Запускаем при загрузке и при скролле
+        window.addEventListener('scroll', revealOnScroll);
+        // Вызываем один раз сразу, чтобы показать Hero секцию
+        revealOnScroll();
+
+        // Добавляем плавный скролл по якорям
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>
